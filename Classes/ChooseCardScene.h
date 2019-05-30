@@ -2,9 +2,9 @@
 #include "cocos2d.h"
 #include"Global Class/Tool.h"
 #include"LobbyScene.h"
-//#include "Object/SocketClient.h"
+#include"GameScene.h"
 
-#include <network/SocketIO.h>
+//#include <network/SocketIO.h>
 using namespace cocos2d::network;
 using namespace cocos2d::ui;
 
@@ -18,15 +18,22 @@ public:
 	CREATE_FUNC(ChooseCardScene);
 
 	Size visibleSize;
-	Label* lbl_Notify;
+	int timer = 0, turn = 0, counter = 0;
+	Label* lbl_Notify, *lbl_Turn, *lbl_Cooldown, *lbl_CurrentPlayerPick, *lbl_OpponentPlayerPick;
 	EditBox *editBox_Username, *editBox_Password;
 	Button *btn_Login, *btn_Register;
 	vector<Button*> vecButton;
+	vector<pair<int, string>> bannedCard;
 
 	void SetupGUI();
 	void btn_Click(Ref *pSender, cocos2d::ui::Button::Widget::TouchEventType type);
+	void btn_BanCard_Click(Ref *pSender, cocos2d::ui::Button::Widget::TouchEventType type);
+	void btn_ChooseKingdom_Click(Ref *pSender, cocos2d::ui::Button::Widget::TouchEventType type);
 	void RunActionNotify(string content);
+	void UpdateEachSecond(float time);
+	void ChangeTurn();
 
-	void onReceiveEvent(SIOClient* client, const std::string& data);
+	void onReceive_BanCard(SIOClient* client, const std::string& data);
+	void onReceive_PickCard(SIOClient* client, const std::string& data);
+	void onReceive_SelectElement(SIOClient* client, const std::string& data);
 };
-

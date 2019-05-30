@@ -68,7 +68,6 @@
 
 class ObjectConstructor {
 public:
-	static BaseUnitClass* InitializeObject(string objectName, int line, bool isOwned, int playerId);
+	static BaseUnitClass* InitializeObject(string objectName, int line, bool isOwned, int playerId, int unitId);
 	static ui::ScrollView* GetSpecificUnitDetails(string unitName, Size visibleSize);
 };
-

@@ -43,9 +43,15 @@ void LobbyScene::findTheOpponent(SIOClient* client, const std::string& data)
 			if (Tool::currentPlayer->id == Tool::ConvertStringToInt(*Vec[0]) || Tool::currentPlayer->id == Tool::ConvertStringToInt(*Vec[1]))
 			{
 				Tool::currentPlayer->room_name = document["Room"].GetString();
-				Tool::opponentPlayer->id = document["id"].GetInt();
-				Tool::opponentPlayer->username = document["username"].GetString();
-				Director::getInstance()->replaceScene(GameScene::createScene());
+				if (Tool::currentPlayer->id != Tool::ConvertStringToInt(*Vec[0]))
+				{
+					Tool::opponentPlayer->id = Tool::ConvertStringToInt(*Vec[0]);
+				}
+				if (Tool::currentPlayer->id != Tool::ConvertStringToInt(*Vec[1]))
+				{
+					Tool::opponentPlayer->id = Tool::ConvertStringToInt(*Vec[1]);
+				}
+				Director::getInstance()->replaceScene(ChooseCardScene::createScene());
 				//CCLOG("change Scene");
 			}
 		}
@@ -62,7 +68,7 @@ void LobbyScene::SetupGUI()
 	sp_SceneName->setPosition(Vec2(visibleSize.width * 0.5, visibleSize.height*0.9));
 	this->addChild(sp_SceneName);
 
-	auto sp_Background = Sprite::create("UI/LoginScene/background.png");
+	auto sp_Background = Sprite::create("UI/LoginScene/background1.png");
 	sp_Background->setPosition(visibleSize / 2);
 	this->addChild(sp_Background, -1);
 
@@ -80,21 +86,27 @@ void LobbyScene::SetupGUI()
 
 	btn_Rank = Button::create("UI/LobbyScene/btn_Rank_nomal.png", "UI/LobbyScene/btn_Rank_select.png");
 	btn_Rank->setName("btn_Rank");
-	btn_Rank->setPosition(Vec2(visibleSize.width*0.25, visibleSize.height*0.08));
+	btn_Rank->setPosition(Vec2(visibleSize.width*0.2, visibleSize.height*0.8));
 	btn_Rank->addTouchEventListener(CC_CALLBACK_2(LobbyScene::btn_Click, this));
 	this->addChild(btn_Rank);
 
 	btn_Tutorial = Button::create("UI/LobbyScene/btn_Tutorial_nomal.png", "UI/LobbyScene/btn_Tutorial_select.png");
 	btn_Tutorial->setName("btn_Tutorial");
-	btn_Tutorial->setPosition(Vec2(visibleSize.width*0.5, visibleSize.height*0.08));
+	btn_Tutorial->setPosition(Vec2(visibleSize.width*0.2, visibleSize.height*0.6));
 	btn_Tutorial->addTouchEventListener(CC_CALLBACK_2(LobbyScene::btn_Click, this));
 	this->addChild(btn_Tutorial);
 
 	btn_Extend = Button::create("UI/LobbyScene/btn_Extend_nomal.png", "UI/LobbyScene/btn_Extend_select.png");
 	btn_Extend->setName("btn_Extend");
-	btn_Extend->setPosition(Vec2(visibleSize.width*0.75, visibleSize.height*0.08));
+	btn_Extend->setPosition(Vec2(visibleSize.width*0.2, visibleSize.height*0.4));
 	btn_Extend->addTouchEventListener(CC_CALLBACK_2(LobbyScene::btn_Click, this));
 	this->addChild(btn_Extend);
+
+	btn_Logout = Button::create("UI/LobbyScene/btn_Logout_nomal.png", "UI/LobbyScene/btn_Logout_select.png");
+	btn_Logout->setName("btn_Logout");
+	btn_Logout->setPosition(Vec2(visibleSize.width*0.2, visibleSize.height*0.2));
+	btn_Logout->addTouchEventListener(CC_CALLBACK_2(LobbyScene::btn_Click, this));
+	this->addChild(btn_Logout);
 
 	auto lbl_Username = Tool::CreateLabel(Tool::currentPlayer->username, Tool::defaultTextSize*1.5);
 	lbl_Username->setPosition(visibleSize / 2);
@@ -118,6 +130,10 @@ void LobbyScene::btn_Click(Ref *pSender, cocos2d::ui::Button::Widget::TouchEvent
 		if (name == "btn_Extend")
 		{
 			Director::getInstance()->replaceScene(ListRoomScene::createScene());
+		}
+		if (name == "btn_Logout")
+		{
+			Director::getInstance()->replaceScene(LoginScene::createScene());
 		}
 	}
 }

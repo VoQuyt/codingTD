@@ -85,7 +85,15 @@ void IngameObject::loadAnimate() {
 	IngameObject::animate.insert(CreateAnimateWithKey("Hell Fire", "fire", 1, 7));
 	IngameObject::animate.insert(CreateAnimateWithKey("Heaven Bless", "heal", 1, 15));
 
+}//chưa có nè :V
+//t nhớ copy rồi mà t
+string IngameObject::GetKingdomByElement(string element)
+{
+	if (element == "Fire") return "Flamed Kingdom";
+	if (element == "Ice") return "Frozen Kingdom";
+	if (element == "Nature") return "Blessed Kingdom";
 }
+
 
 Animate* IngameObject::CreateAnimate(string prefix, string suffix, int numBegin, int numEnd, float delay) {
 	auto animation = Animation::create();

@@ -11,7 +11,10 @@ USING_NS_CC;
 class GameScene : public cocos2d::Scene
 {
 public:
-	
+	static vector<string> playerPickedUnit;
+	static vector<string> chatBoxContent;
+	static void ClearStaticVariables();
+
 	Size visibleSize;
 	Node* staticUI, *questionTable, *buyingBar, *unitDetails, *upgradeTable;
 	Label* lbl_Notify;
@@ -34,11 +37,10 @@ public:
 		Label* lbl_KingdomLevel;
 		int kingdomLevel = 1;
 		Button *btn_Skill1, *btn_Skill2;
-		BaseUnitClass* kingdom;
+		BaseUnitClass* kingdom, *opponentKingdom;
 	};
 	IngamePlayer ingamePlayerInfo;
 	void UpdateIngamePlayerInfo();
-	static vector<string> playerPickedUnit;
 	void LoadIngamePlayerInfo();
 
 	//Dùng skill
@@ -94,7 +96,6 @@ public:
 
 	//Các vấn đề về Chatbox
 	ui::ScrollView *sc_ChatBox;
-	vector<string> chatBoxContent;
 	EditBox* EditBox_Chat;
 	Button* btn_SendMessage;
 	void CreateChatbox();
@@ -129,6 +130,7 @@ public:
 	void onReceiveEvent_InitializeIngameObject(SIOClient* client, const std::string& data);
 	void onReceiveEvent_ExcuteSkill(SIOClient* client, const std::string& data);
 	void onReceiveEvent_SendMessage(SIOClient* client, const std::string& data);
+	void onReceiveEvent_UpgradeKingdom(SIOClient* client, const std::string& data);
 
 	//Setup trong init
 	void SetupCamera();

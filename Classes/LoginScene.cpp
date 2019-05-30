@@ -88,7 +88,7 @@ void LoginScene::SetupGUI()
 	sp_SceneName->setPosition(Vec2(visibleSize.width * 0.5, visibleSize.height*0.9));
 	this->addChild(sp_SceneName);
 
-	auto sp_Background = Sprite::create("UI/LoginScene/background.png");
+	auto sp_Background = Sprite::create("UI/LoginScene/background1.png");
 	sp_Background->setPosition(visibleSize / 2);
 	this->addChild(sp_Background, -1);
 
