@@ -1,6 +1,6 @@
 #pragma once
 #include "cocos2d.h"
-#include"Global Class/Tool.h"
+#include"GlobalClass/Tool.h"
 #include"LobbyScene.h"
 USING_NS_CC;
 class RankingScene : public cocos2d::Scene
@@ -16,8 +16,9 @@ public:
 	ui::ScrollView *ScrollView_RankingTable;
 	
 
-	Node* CreateRow(string stt, string id, string name, string score, string question);
+	Node* CreateRow(string stt, string name, string score, string question, string total_kill);
 	Node* CreateRow_Default();
+	Node* CreateRowCurrentPlayer(string stt, string name, string win, string correct_answer, string total_kill);
 	void SetupGUI();
 	void btn_Click(Ref *pSender, cocos2d::ui::Button::Widget::TouchEventType type);
 	void RunActionNotify(string content);

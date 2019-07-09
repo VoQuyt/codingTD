@@ -1,11 +1,9 @@
 #pragma once
 
 #include "cocos2d.h"
-#include "network/HttpClient.h"
-#include "extensions/cocos-ext.h"
 #include "ui\CocosGUI.h"
 #include <vector>
-#include "Global Class/Tool.h"
+#include "GlobalClass/Tool.h"
 #include "LobbyScene.h"
 USING_NS_CC;
 
@@ -24,9 +22,10 @@ public:
 	CREATE_FUNC(TutorialScene);
 
 	Size visibleSize;
-	int currentPage = 0;
-	void onClick(Ref *pSender, cocos2d::ui::Button::Widget::TouchEventType type);
 	vector<Label*> vecLabel;
 	vector<Sprite*> vecSprite;
-	Button* btn_Back, *btn_Next, *btn_Exit;
+	vector<string> labelContent;
+	Button *btn_Exit;
+	ui::ScrollView *ScrollView_TutorialList;
+	void btn_Click(Ref *pSender, cocos2d::ui::Button::Widget::TouchEventType type);
 };

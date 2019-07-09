@@ -1,15 +1,16 @@
 #pragma once
 #include "cocos2d.h"
-#include"Global Class/Tool.h"
-#include"LobbyScene.h"
-//#include "Object/SocketClient.h"
-
-#include <network/SocketIO.h>
-using namespace cocos2d::network;
+#include "GlobalClass/Tool.h"
+#include "GlobalClass/Audio.h"
+#include "LobbyScene.h"
+#include "ui/CocosGUI.h"
+#include"RegisterScene.h"
 using namespace cocos2d::ui;
+using namespace std;
+using namespace cocos2d::network;
 
 USING_NS_CC;
-class LoginScene : public cocos2d::Scene //, public SocketIO::SIODelegate
+class LoginScene : public cocos2d::Scene
 {
 public:
 	static cocos2d::Scene* createScene();
@@ -19,7 +20,7 @@ public:
 
 	Size visibleSize;
 	Label* lbl_Notify;
-	EditBox *editBox_Username, *editBox_Password;
+	EditBox *editBox_Username, *editBox_Password, *editBox_Domain;
 	Button *btn_Login, *btn_Register;
 
 	void SetupGUI();
@@ -27,9 +28,7 @@ public:
 	void RunActionNotify(string content);
 
 	void onReceiveEvent(SIOClient* client, const std::string& data);
-	/*virtual void onConnect(SIOClient* client);
-	virtual void onMessage(SIOClient* client, const std::string& data);
-	virtual void onClose(SIOClient* client);
-	virtual void onError(SIOClient* client, const std::string& data);*/
+	void onReceiveEvent_GetPlayerInfo(SIOClient * client, const std::string & data);
+
 };
 

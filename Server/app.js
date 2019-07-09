@@ -31,27 +31,55 @@ io.sockets.on('connection', function(socket){
 	//kiểm tra đăng nhập
 	socket.on('_Log_in_', function(data){
 		var mes = JSON.parse(data)
-		//console.log(mes.username +"_"+mes.password);
+		console.log(data);
+		console.log(mes.username +"_"+mes.password);
 		con.query("SELECT *FROM `player` WHERE player.username like '" + mes.username + "' and player.password like '"+ mes.password +"'",
 			function (error, result, fields) {
 				if (error) throw error;
 				if(result.length == 1){
-				socket.emit('_Check_Login_', {Check: result[0].id});	
+					if(result[0].status == 1) socket.emit('_Check_Login_', {Check: -1});	
+					else {
+						con.query("UPDATE `player` SET player.status = 1 WHERE player.id = " + result[0].id); 
+						socket.emit('_Check_Login_', {Check: result[0].id});	
+					}
 				}
 				else{
 					socket.emit('_Check_Login_', {Check: 0});
 				}
 		});
 	});
+	
+	//Đăng ký
+	socket.on('Register', function(data){
+		var mes = JSON.parse(data)
+		con.query("SELECT *FROM `player` WHERE player.username like '" + mes.username +"'",
+			function (error, result, fields) {
+				if (error) throw error;
+				if(result.length != 0){
+					socket.emit('Register', {Check: -1});	
+				}
+				else{
+					socket.emit('Register', {Check: 0});
+					con.query("INSERT INTO `player`(username,password) VALUE('"+mes.username+"', '"+mes.password+"')"); 
+				}
+		});
+	});
+	
+	//Đăng xuất
+	socket.on('Logout', function(data){
+		var mes = JSON.parse(data)
+		console.log(mes.id + " logged out");
+		con.query("UPDATE `player` SET player.status = 0, player.ready = 0 WHERE player.id = '" + mes.id + "'"); 
+	});
 
 	//lay thong tin nguoi choi
-	socket.on('Get_infor_Player', function(data){
+	socket.on('Get_Player_Info', function(data){
 		var mes = JSON.parse(data)
 		//console.log(mes.username +"_"+mes.password);
 		con.query("SELECT * FROM `player` WHERE player.id = "+ mes.id, 
 			function (error, result, fields) {
 				if (error) throw error;
-				socket.emit('Get_infor_Player', {id: mes.id, name: result[0].username});
+				socket.emit('Get_Player_Info', {id: mes.id, username: result[0].username, password: result[0].password, experience: result[0].experience, correct_answer: result[0].correct_answer, wrong_answer: result[0].wrong_answer, total_win: result[0].total_win, total_lose: result[0].total_lose, total_kill: result[0].total_kill, friendship_point: result[0].friendship_point, friendship_level: result[0].friendship_level, room_name: result[0].room_name, submit_available: result[0].submit_available, status: result[0].status});
 		});
 	});
 
@@ -63,6 +91,7 @@ io.sockets.on('connection', function(socket){
 		con.query("UPDATE `player` set player.room_name = '1' where player.id = " + mes.id, 
 			function (error, result, fields) {
 				if (error) throw error;
+
 				console.log('create room success');
 		});
 	});
@@ -74,7 +103,7 @@ io.sockets.on('connection', function(socket){
 		con.query("UPDATE `player` set player.room_name = '0' where player.id = " + mes.id, 
 			function (error, result, fields) {
 				if (error) throw error;
-				//io.sockets.emit('Destroy_Room', {Room: mes.Room, id: mes.id});
+
 				console.log('destroy room success');
 		});
 	});
@@ -137,7 +166,7 @@ io.sockets.on('connection', function(socket){
 	socket.on('_Get_List_Rank_', function(data){
 		var mes = JSON.parse(data)
 		//console.log(mes.username +"_"+mes.password);
-		con.query("SELECT * FROM `player` GROUP BY player.total_score DESC", 
+		con.query("SELECT * FROM `player` ORDER BY player.total_win DESC", 
 			function (error, result, fields) {
 				if (error) throw error;
 
@@ -150,16 +179,41 @@ io.sockets.on('connection', function(socket){
 		    		var key = "username"+i;
 		    		var value = result[i].username;
 		    		_Get_List_Rank_[key] = value;
-		    		var key = "total_score"+i;
-		    		var value = result[i].total_score;
+		    		var key = "total_win"+i;
+		    		var value = result[i].total_win;
 		    		_Get_List_Rank_[key] = value;
-		    		var key = "total_question"+i;
-		    		var value = result[i].total_question;
+		    		var key = "correct_answer"+i;
+		    		var value = result[i].correct_answer;
+		    		_Get_List_Rank_[key] = value;
+		    		var key = "total_kill"+i;
+		    		var value = result[i].total_kill;
 		    		_Get_List_Rank_[key] = value;
 		    	}
-		    	
+		    	for(var i = 0; i < result.length; i++)
+		    	{
+		    		if(result[i].id == mes.id)
+		    		{
+		    			var key = "Current_rank";
+			    		var value = i+1;
+			    		_Get_List_Rank_[key] = value;
+		    			var key = "Current_id";
+			    		var value = result[i].id;
+			    		_Get_List_Rank_[key] = value;
+			    		var key = "Current_user_name";
+			    		var value = result[i].username;
+			    		_Get_List_Rank_[key] = value;
+			    		var key = "Current_total_win";
+			    		var value = result[i].total_win;
+			    		_Get_List_Rank_[key] = value;
+			    		var key = "Current_correct_answer";
+			    		var value = result[i].correct_answer;
+			    		_Get_List_Rank_[key] = value;
+			    		var key = "Current_total_kill";
+		    			var value = result[i].total_kill;
+		    			_Get_List_Rank_[key] = value;
+		    		}
+		    	}
 				socket.emit('_Get_List_Rank_', {_Get_List_Rank_});	
-				//console.log(_Get_List_Rank_);
 		});
 	});
 
@@ -307,27 +361,79 @@ io.sockets.on('connection', function(socket){
 	//tạo lính
 	socket.on('Create_Unit', function(data){
 		var mes = JSON.parse(data)
-		//console.log("Level: " + mes.Level);
 		io.sockets.emit('Create_Unit', {Room: mes.Room, name: mes.name, line: mes.line, id: mes.id});
 	});
 
 	//userSkill
 	socket.on('Use_Skill', function(data){
 		var mes = JSON.parse(data)
-		//console.log("Level: " + mes.Level);
 		io.sockets.emit('Use_Skill', {Room: mes.Room, name: mes.name, unitId: mes.unitId, id: mes.id});
 	});
 
 	//send message
 	socket.on('Send_Message', function(data){
 		var mes = JSON.parse(data)
-		//console.log("Level: " + mes.Level);
-		io.sockets.emit('Send_Message', {Room: mes.Room, content: mes.content});
+		io.sockets.emit('Send_Message', {Room: mes.Room, content: mes.content, id: mes.id});
+	});
+	
+	//kết quả trả lời câu hỏi
+	socket.on('Answer_Result', function(data){
+		var mes = JSON.parse(data)
+		io.sockets.emit('Answer_Result', {Room: mes.Room, id: mes.id, result: mes.result, gold: mes.gold});
+	});
+	
+	//đặt cược
+	socket.on('Active_Challenge', function(data){
+		var mes = JSON.parse(data)
+		io.sockets.emit('Active_Challenge', {Room: mes.Room, id: mes.id, status: mes.status});
+	});
+	
+	//Nâng cấp quân đội
+	socket.on('Upgrade_Army', function(data){
+		var mes = JSON.parse(data)
+		io.sockets.emit('Upgrade_Army', {Room: mes.Room, id: mes.id, name: mes.name});
+	});
+	
+	//Cập nhật thông tin player vào csdl
+	socket.on('Upload_Player_Info', function(data){
+		var mes = JSON.parse(data)
+		console.log("Upload Player Info Successful");	
+		con.query("UPDATE `player` SET username = '" + mes.username + "'"
+			+ ", password = '" + mes.password + "'"
+			+ ", experience = " + mes.experience
+			+ ", correct_answer = " + mes.correct_answer
+			+ ", wrong_answer = " + mes.wrong_answer
+			+ ", total_win = " + mes.total_win
+			+ ", total_lose = " + mes.total_lose
+			+ ", total_kill = " + mes.total_kill
+			+ ", friendship_point = " + mes.friendship_point
+			+ ", friendship_level = '" + mes.friendship_level + "'"
+			+ ", submit_available = " + mes.submit_available
+			+ " WHERE id = " + mes.id,
+			function (error, result, fields) {
+				if (error) throw error;
+		});
 	});
 
-
+	//Đầu hàng
+	socket.on('End_Game', function(data){
+		var mes = JSON.parse(data)
+		io.sockets.emit('End_Game', {Room: mes.Room, id: mes.id});
+	});
+	
+	//Thời gian trên server
+	socket.on('Server_Time', function(data){
+		var today = new Date();
+		var h = today.getHours();
+        var m = today.getMinutes();
+        var s = today.getSeconds();
+		var time = h + ":" + m + ":" + s;
+		var mes = JSON.parse(data)
+		io.sockets.emit('Server_Time', {Server_Time: time});
+	});
+	
 	//lấy câu hỏi theo level
-	socket.on('_Level_', function(data){
+	socket.on('Get_Question', function(data){
 		var mes = JSON.parse(data)
 		console.log("Level: " + mes.Level);
 	//truy vấn
@@ -338,7 +444,7 @@ io.sockets.on('connection', function(socket){
 	function (error, result, fields) {
     if (error) throw error;
 	//get result to client
-	io.sockets.emit('_Question_is_', {Room: mes.Room,
+	io.sockets.emit('Receive_Question', {Room: mes.Room,
 									id: results[0].id, 
 									content: results[0].content, 
 									level: results[0].level, 

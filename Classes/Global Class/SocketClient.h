@@ -22,6 +22,7 @@ public:
 	
 	//void Check_Login();
 	SIOClient* _client = SocketIO::connect("http://127.0.0.1:3000", *this);
-};
+};//
+//https://node.phanthinhutrang.com/
 
 #endif // __SOCKETCLIENT_SCENE_H__

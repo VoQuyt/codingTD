@@ -1,10 +1,10 @@
-#pragma once
+﻿#pragma once
 #include "cocos2d.h"
-#include"Global Class/Tool.h"
+#include"GlobalClass/Tool.h"
+#include"GlobalClass/Player.h"
 #include"LobbyScene.h"
 #include"GameScene.h"
-
-//#include <network/SocketIO.h>
+#include"GlobalClass/Audio.h"
 using namespace cocos2d::network;
 using namespace cocos2d::ui;
 
@@ -19,7 +19,8 @@ public:
 
 	Size visibleSize;
 	int timer = 0, turn = 0, counter = 0;
-	Label* lbl_Notify, *lbl_Turn, *lbl_Cooldown, *lbl_CurrentPlayerPick, *lbl_OpponentPlayerPick;
+	Label* lbl_Notify, *lbl_Turn, *lbl_Cooldown, *lbl_CurrentPlayerPick, *lbl_OpponentPlayerPick,*lbl_CurrentPlayerName,*lbl_OpponentPlayerName;
+	Vec2 currentPlayerPosition, opponentPlayerPosition;
 	EditBox *editBox_Username, *editBox_Password;
 	Button *btn_Login, *btn_Register;
 	vector<Button*> vecButton;
@@ -36,4 +37,7 @@ public:
 	void onReceive_BanCard(SIOClient* client, const std::string& data);
 	void onReceive_PickCard(SIOClient* client, const std::string& data);
 	void onReceive_SelectElement(SIOClient* client, const std::string& data);
+	void onReceiveEvent_GetInfoPlayer(SIOClient* client, const std::string& data);
+	void onReceiveEvent_GetInfoOpponent(SIOClient* client, const std::string& data);
 };
+
